@@ -106,11 +106,12 @@ Update the values based on your environment.
 
 ```
 frontend/
+├── __mocks__/          # Test Mocks
+├── __tests__/          # Test cases
 ├── public/             # Static assets
 ├── src/
 │   ├── components/     # React components
 │   ├── pages/          # Page components
-│   ├── tests/          # Test cases
 │   ├── App.js          # Main app component
 │   └── index.js        # Entry point
 ├── Dockerfile          # Docker configuration
