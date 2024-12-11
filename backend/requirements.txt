@@ -1,0 +1,8 @@
+django
+djangorestframework
+djangorestframework-simplejwt
+psycopg2-binary
+pytest
+pytest-django
+coverage
+django-cors-headers
