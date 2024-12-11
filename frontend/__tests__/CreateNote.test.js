@@ -1,16 +1,28 @@
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import CreateNote from '../src/pages/CreateNote';
+import { useNavigate } from 'react-router-dom';
+
+// Mock the `useNavigate` hook
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn(),
+}));
 
 // Mock the fetch API
 beforeAll(() => {
     global.fetch = jest.fn((url, options) => {
         const formData = options.body;
 
+        // Validate FormData contents
         if (formData instanceof FormData) {
-            expect(formData.get('title')).toBe('Test Note Title');
-            expect(formData.get('description')).toBe('Test Note Description');
-            expect(formData.get('audio_file')).toBeTruthy(); // Ensure audio file is included
+            const title = formData.get('title');
+            const description = formData.get('description');
+            const audioFile = formData.get('audio_file');
+
+            expect(title).toBe('Test Note Title');
+            expect(description).toBe('Test Note Description');
+            expect(audioFile).toBeInstanceOf(Blob); // Validate audio file type
         }
 
         return Promise.resolve({
@@ -31,7 +43,7 @@ jest.mock('../src/components/AudioRecorder', () => {
             <div>
                 <button
                     onClick={() => {
-                        const mockAudioBlob = new Blob(['audio'], { type: 'audio/webm' });
+                        const mockAudioBlob = new Blob(['mock audio data'], { type: 'audio/webm' });
                         onSave(mockAudioBlob);
                     }}
                 >
@@ -44,6 +56,9 @@ jest.mock('../src/components/AudioRecorder', () => {
 
 describe('CreateNote Component', () => {
     it('creates a note with sound recording', async () => {
+        const mockNavigate = jest.fn();
+        useNavigate.mockReturnValue(mockNavigate);
+
         render(<CreateNote />);
 
         // Fill in the note title
@@ -56,7 +71,7 @@ describe('CreateNote Component', () => {
             target: { value: 'Test Note Description' },
         });
 
-        // Start recording audio
+        // Simulate starting and saving audio recording
         fireEvent.click(screen.getByText(/Start Recording/i));
 
         // Submit the form
@@ -73,7 +88,7 @@ describe('CreateNote Component', () => {
             );
         });
 
-        // Assert post-creation behavior
-        expect(screen.getByText(/Note created successfully/i)).toBeInTheDocument();
+
+        expect(mockNavigate).toHaveBeenCalledWith('/notes');
     });
 });

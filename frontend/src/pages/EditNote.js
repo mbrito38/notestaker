@@ -27,8 +27,12 @@ const EditNote = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Create a copy of formData without the `audio_file` field
+        const { audio_file, ...dataToSend } = formData;
+
         try {
-            await updateNote(id, formData, token);
+            await updateNote(id, dataToSend, token);
             navigate('/notes');
         } catch (error) {
             console.error('Error updating note:', error);
@@ -72,4 +76,3 @@ const EditNote = () => {
 };
 
 export default EditNote;
-

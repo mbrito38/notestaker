@@ -29,19 +29,7 @@ const CreateNote = () => {
         }
 
         try {
-            // Use fetch to test content type and payload handling
-            const response = await fetch('http://localhost:8000/api/notes/', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: noteData, // Pass FormData as body
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
+            await createNote(noteData, token); // Use the abstracted API function
             navigate('/notes'); // Redirect to notes page
         } catch (error) {
             console.error('Error creating note:', error);
